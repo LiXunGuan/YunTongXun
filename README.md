@@ -14,9 +14,9 @@ YunTongXun
 		'sid'     => '账户ID',
 		'token'   => 'token信息',
 	))
-	->to('18659802750')
-	->with(array('2014-11-06','10000','10000','20000'))
-	->sendTemplateSMS(6765);
+	->to('18600000000') //手机号码
+	->with(array('2014-11-06','10000','10000','20000')) // 内容替换
+	->sendTemplateSMS(6765); //模板id
 
 	print_r($sms);
 ```
