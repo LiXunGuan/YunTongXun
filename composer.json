@@ -1,0 +1,24 @@
+{
+    "name": "lixunguan/yuntongxun",
+    "description": "容联·云通讯PHP API",
+    "keywords": [
+        "yuntongxun"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "LiXunGuan",
+            "email": "183517940@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "4.2.*"
+    },
+    "autoload": {
+        "psr-4":{
+            "": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
