@@ -69,7 +69,7 @@ class Sdk
 	 * @param  array   $datas      模板替换内容，例如：array('Marry','Alon')，如不需替换请填 null
 	 * @param  integer $templateID 模板id
 	 * @param  string  $dataType   数据类型 json 或xml
-	 * @return xml/array
+	 * @return xml/object
 	 */
 	public function sendTemplateSMS($to, array $datas, $templateID, $dataType = 'json')
 	{
@@ -130,7 +130,7 @@ class Sdk
 				throw new Exception('第三方服务器出错');				
 			}
 
-			return ($dataType == 'json') ? json_decode($response->getBody(), true) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
+			return ($dataType == 'json') ? json_decode($response->getBody()) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
 			
 		} catch (Exception $e) {
 			throw $e;
@@ -142,7 +142,7 @@ class Sdk
 	 * @param  date   $date     day：前一天的数据（从00:00 – 23:59）
 	 * @param  string $keywords 客户的查询条件，由客户自行定义并提供给云通讯平台。默认不填忽略此参数
 	 * @param  string $dataType 数据类型 json 或xml
-	 * @return xml/array
+	 * @return xml/object
 	 */
 	public function billRecords($date, $keywords = '', $dataType = 'json')
 	{
@@ -189,7 +189,7 @@ class Sdk
 				throw new Exception('第三方服务器出错');				
 			}
 
-			return ($dataType == 'json') ? json_decode($response->getBody(), true) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
+			return ($dataType == 'json') ? json_decode($response->getBody()) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
 						
 		} catch (Exception $e) {
 			throw $e;
