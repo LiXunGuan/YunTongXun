@@ -69,7 +69,7 @@ class Sdk
 	 * @param  array   $datas      模板替换内容，例如：array('Marry','Alon')，如不需替换请填 null
 	 * @param  integer $templateID 模板id
 	 * @param  string  $dataType   数据类型 json 或xml
-	 * @return xml/object
+	 * @return xml/array
 	 */
 	public function sendTemplateSMS($to, array $datas, $templateID, $dataType = 'json')
 	{
@@ -132,6 +132,65 @@ class Sdk
 
 			return ($dataType == 'json') ? json_decode($response->getBody(), true) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
 			
+		} catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * 话单下载
+	 * @param  date   $date     day：前一天的数据（从00:00 – 23:59）
+	 * @param  string $keywords 客户的查询条件，由客户自行定义并提供给云通讯平台。默认不填忽略此参数
+	 * @param  string $dataType 数据类型 json 或xml
+	 * @return xml/array
+	 */
+	public function billRecords($date, $keywords = '', $dataType = 'json')
+	{
+		# 请求包体
+		if ($dataType == 'json') {
+			$param = array(
+				'appId'    => $this->appId,
+				'date'     => $date,
+				'keywords' => $keywords
+			);
+			$body = json_encode($param);
+		}else{
+
+			$body = "
+				<BillRecords>
+					<appId>{$this->appId}</appId>
+					<date>{$date}</date>
+					<keywords>{$keywords}</keywords>
+				</BillRecords>";
+		}
+
+		# 请求url
+		$url = self::BASE_URL . "/Accounts/{$this->sid}/SMS/BillRecords?sig=" . $this->sign();
+
+		# 请求头信息
+		$header = array(
+			'Accept'        => 'application/' . $dataType,
+			'Content-Type'  => 'application/' . $dataType,
+			'charset'       => 'utf-8',
+			'Authorization' => $this->authen()
+		);
+
+		$client = new Client();
+
+		try {
+
+			$response = $client->post($url, array(
+				'headers' => $header,
+				'body'    => $body,
+				'verify'  => false
+			));
+
+			if ($response->getStatusCode() != '200') {
+				throw new Exception('第三方服务器出错');				
+			}
+
+			return ($dataType == 'json') ? json_decode($response->getBody(), true) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
+						
 		} catch (Exception $e) {
 			throw $e;
 		}
