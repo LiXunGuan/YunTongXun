@@ -71,7 +71,7 @@ class Sdk
 	 * @param  string  $dataType   数据类型 json 或xml
 	 * @return xml/object
 	 */
-	public function sendTemplateSMS($to, array $datas, $templateID, $dataType = 'xml')
+	public function sendTemplateSMS($to, array $datas, $templateID, $dataType = 'json')
 	{
 		# 请求包体
 		$param = array(
