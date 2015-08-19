@@ -9,15 +9,12 @@ YunTongXun
 ## 发送模板短信
 
 ```php
-	$sms = Yuntongxun::init(array(
-		'appid'   => '应用ID',
-		'sid'     => '账户ID',
-		'token'   => 'token信息',
-	))
-	->to('18600000000') //手机号码
-	->with(array('2014-11-06','10000','10000','20000')) // 内容替换
-	->sendTemplateSMS(6765); //模板id
+	require 'vendor/autoload.php';
 
+	use Lixunguan\Yuntongxun\Sdk as Yuntongxun;
+
+	$sdk = new Yuntongxun('应用ID', '账户ID', 'token');
+	$sms = $sdk->sendTemplateSMS('15900000000', array('1252'), 1484);
 	print_r($sms);
 ```
 
