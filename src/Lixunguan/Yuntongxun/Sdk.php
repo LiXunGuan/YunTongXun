@@ -195,4 +195,84 @@ class Sdk
 			throw $e;
 		}
 	}
+
+	/**
+	 * 双向回拨
+	 * @see   http://docs.yuntongxun.com/index.php/%E5%8F%8C%E5%90%91%E5%9B%9E%E6%8B%A8
+	 * @param string $from           主叫电话号码(必选)
+	 * @param string $to             被叫电话号码(必选)
+	 * @param array  $param          其他参数
+		 * @param string $customerSerNum 被叫侧显示的号码
+		 * @param string $fromSerNum     主叫侧显示的号码
+		 * @param string $promptTone     提示音(wav格式文件)，语音文件需官网审核后才可使用
+		 * @param string $alwaysPlay     是否重复播放提示音
+		 * @param string terminalDtmf    用于终止播放promptTone参数定义的提示音
+		 * @param string userData        第三方私有数据
+		 * @param string maxCallTime     最大通话时长
+		 * @param string hangupCdrUrl    实时话单通知地址
+		 * @param string needBothCdr     是否给主被叫发送话单
+		 * @param string needRecord      是否录音
+		 * @param string countDownTime   设置倒计时时间
+		 * @param string countDownPrompt 倒计时时间到后播放的提示音
+	 * @param  string $dataType 数据类型 json 或xml
+	 */
+	public function Callback($from, $to, $param = array(), $dataType = 'json')
+	{
+		$params = array('customerSerNum', 'fromSerNum', 'promptTone', 'alwaysPlay', 'terminalDtmf', 'userData', 'maxCallTime', 'hangupCdrUrl', 'needBothCdr', 'needRecord', 'countDownTime', 'countDownPrompt');
+		$param  = array_map(function($key) use($param){
+			return isset($param[$key]) ? $param[$key] : '';
+		}, $params);
+
+		if ($dataType == 'json') {
+			$body = json_encode($param);
+		}else{
+			$body = "
+				<CallBack>
+					<from>{$param['from']}</from>
+					<to>{$param['to']}</to>
+					<customerSerNum>{$param['customerSerNum']}</customerSerNum>
+					<fromSerNum>{$param['fromSerNum']}</fromSerNum>
+					<promptTone>{$param['promptTone']}</promptTone>
+					<userData>{$param['userData']}</userData>
+					<maxCallTime>{$param['maxCallTime']}</maxCallTime>
+					<hangupCdrUrl>{$param['hangupCdrUrl']}</hangupCdrUrl>
+					<alwaysPlay>{$param['alwaysPlay']}</alwaysPlay>
+					<terminalDtmf>{$param['terminalDtmf']}</terminalDtmf>
+					<needBothCdr>{$param['needBothCdr']}</needBothCdr>
+					<needRecord>{$param['needRecord']}</needRecord>
+					<countDownTime>{$param['countDownTime']}</countDownTime>
+					<countDownPrompt>{$param['countDownPrompt']}</countDownPrompt>
+				</CallBack>
+			";
+		}
+
+		$url = self::BASE_URL . "/SubAccounts/{$this->sid}/Calls/Callback?sig=" . $this->sign();
+
+		$header = array(
+			'Accept'        => 'application/' . $dataType,
+			'Content-Type'  => 'application/' . $dataType,
+			'charset'       => 'utf-8',
+			'Authorization' => $this->authen()
+		);
+
+		$client = new Client();
+
+		try {
+
+			$response = $client->post($url, array(
+				'headers' => $header,
+				'body'    => $body,
+				'verify'  => false
+			));
+
+			if ($response->getStatusCode() != '200') {
+				throw new Exception('第三方服务器出错');
+			}
+
+			return ($dataType == 'json') ? json_decode($response->getBody()) : simplexml_load_string(trim($response->getBody()," \t\n\r"));
+
+		} catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
