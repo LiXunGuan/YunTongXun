@@ -3,6 +3,7 @@ namespace Lixunguan\Yuntongxun;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Exception;
 
 class Sdk
 {
